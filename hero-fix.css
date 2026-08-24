@@ -1,6 +1,6 @@
-/* Hero image reliability fix */
+/* Cyril Motor — real workshop hero */
 .hero{
-  background-image:url("204DBC61-3E7C-4125-910F-B21D97EED0CA.PNG") !important;
+  background-image:url("1032F30E-A089-4C94-95B6-8166070929BC.PNG") !important;
   background-size:cover !important;
   background-position:center center !important;
   background-repeat:no-repeat !important;
@@ -10,9 +10,9 @@
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg,rgba(0,0,0,.60) 0%,rgba(0,0,0,.28) 48%,rgba(0,0,0,.12) 100%) !important;
+  background:linear-gradient(90deg,rgba(0,0,0,.58) 0%,rgba(0,0,0,.25) 48%,rgba(0,0,0,.10) 100%) !important;
   pointer-events:none;
 }
-.heroShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,.05)) !important;z-index:1;pointer-events:none}
+.heroShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.22),rgba(0,0,0,.04)) !important;z-index:1;pointer-events:none}
 .heroInner{position:relative;z-index:2}
 @media(max-width:800px){.hero{background-position:center center !important}}
