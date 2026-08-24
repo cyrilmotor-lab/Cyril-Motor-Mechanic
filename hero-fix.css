@@ -1,0 +1,18 @@
+/* Hero image reliability fix */
+.hero{
+  background-image:url("https://www.flexibele-makelaar.nl/assets/uploads/bedrijfsaanbod-oastkern-57-kootstertille-te-koop/Oastkern%2057%20Kootstertille%20-%20Afbeelding%2012.jpg") !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  background-color:#111 !important;
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.40) 48%,rgba(0,0,0,.18) 100%) !important;
+  pointer-events:none;
+}
+.heroShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.08)) !important;z-index:1;pointer-events:none}
+.heroInner{position:relative;z-index:2}
+@media(max-width:800px){.hero{background-position:center center !important}}
