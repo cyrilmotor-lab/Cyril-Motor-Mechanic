@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111"><link rel="stylesheet" href="dashboard.css"><title>Cyril Motor Dashboard</title></head>
 <body>
-<div id="login" class="screen"><div class="panel"><div class="logo">CM</div><h1>Cyril Motor</h1><p>Workshop Dashboard</p><form id="loginForm"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Password" required><button>Sign in</button><button type="button" id="signup">Create account</button><div id="loginStatus"></div></form></div></div>
+<div id="login" class="screen"><div class="panel"><div class="logo">CM</div><h1>Cyril Motor</h1><p>Workshop Dashboard</p><form id="loginForm"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Password" required><button>Sign in</button><button type="button" id="signup">Create account</button><button type="button" id="forgot">Forgot password?</button><div id="loginStatus"></div></form></div></div>
+<div id="recovery" class="screen" hidden><div class="panel"><div class="logo">CM</div><h1>Set new password</h1><p>Choose a new password for the workshop dashboard.</p><form id="recoveryForm"><input name="password" type="password" placeholder="New password" minlength="8" required><input name="confirm" type="password" placeholder="Confirm new password" minlength="8" required><button>Update password</button><div id="recoveryStatus"></div></form></div></div>
 <div id="app" hidden>
 <header><div><b>Cyril Motor</b><small>Workshop Dashboard</small></div><button id="logout">Log out</button></header>
 <main><div class="top"><div><p>WORKSHOP</p><h1>Dashboard</h1></div><button id="refresh">↻ Refresh</button></div>
