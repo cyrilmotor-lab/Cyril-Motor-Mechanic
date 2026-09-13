@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const sb=createClient(window.CYRIL_CONFIG.supabaseUrl,window.CYRIL_CONFIG.publishableKey);
-const login=document.querySelector("#login"), app=document.querySelector("#app"), list=document.querySelector("#bookings");
+const login=document.querySelector("#login"), app=document.querySelector("#app"), recovery=document.querySelector("#recovery"), list=document.querySelector("#bookings");
 const setStatus=(id,msg)=>document.querySelector(id).textContent=msg;
 async function load(){
  const {data,error}=await sb.from("bookings").select("id,service,preferred_date,preferred_time,status,notes,created_at,customers(full_name,phone,email),vehicles(registration,make,model,year)").order("preferred_date",{ascending:true}).order("preferred_time",{ascending:true}).limit(100);
@@ -13,6 +13,8 @@ async function load(){
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 document.querySelector("#loginForm").addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target);const {error}=await sb.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});setStatus("#loginStatus",error?error.message:"Signed in…")});
 document.querySelector("#signup").addEventListener("click",async()=>{const f=new FormData(document.querySelector("#loginForm"));const {error}=await sb.auth.signUp({email:f.get("email"),password:f.get("password")});setStatus("#loginStatus",error?error.message:"Account created. Check your email if confirmation is enabled.")});
+document.querySelector("#forgot").addEventListener("click",async()=>{const email=document.querySelector('#loginForm input[name="email"]').value.trim();if(!email){setStatus("#loginStatus","Enter your email address first.");return}const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});setStatus("#loginStatus",error?error.message:"Password reset email sent. Check your email.")});
+document.querySelector("#recoveryForm").addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target),password=f.get("password"),confirm=f.get("confirm");if(password!==confirm){setStatus("#recoveryStatus","Passwords do not match.");return}const {error}=await sb.auth.updateUser({password});if(error){setStatus("#recoveryStatus",error.message);return}setStatus("#recoveryStatus","Password updated. You can now sign in.");await sb.auth.signOut();recovery.hidden=true;login.hidden=false});
 document.querySelector("#logout").addEventListener("click",()=>sb.auth.signOut());
 document.querySelector("#refresh").addEventListener("click",load);
-sb.auth.onAuthStateChange((_e,s)=>{if(s){login.hidden=true;app.hidden=false;load()}else{login.hidden=false;app.hidden=true}});
+sb.auth.onAuthStateChange((event,s)=>{if(event==="PASSWORD_RECOVERY"){login.hidden=true;app.hidden=true;recovery.hidden=false;return}if(s){login.hidden=true;recovery.hidden=true;app.hidden=false;load()}else{login.hidden=false;recovery.hidden=true;app.hidden=true}});
