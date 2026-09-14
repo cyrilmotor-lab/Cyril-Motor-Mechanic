@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const sb=createClient(window.CYRIL_CONFIG.supabaseUrl,window.CYRIL_CONFIG.publishableKey);
 const login=document.querySelector("#login"), app=document.querySelector("#app"), recovery=document.querySelector("#recovery"), list=document.querySelector("#bookings");
 const setStatus=(id,msg)=>document.querySelector(id).textContent=msg;
+function showApp(){login.hidden=true;recovery.hidden=true;app.hidden=false;load()}
 async function load(){
  const {data,error}=await sb.from("bookings").select("id,service,preferred_date,preferred_time,status,notes,created_at,customers(full_name,phone,email),vehicles(registration,make,model,year)").order("preferred_date",{ascending:true}).order("preferred_time",{ascending:true}).limit(100);
  if(error){list.textContent=error.message;return}
@@ -11,10 +12,10 @@ async function load(){
  list.querySelectorAll("select").forEach(s=>s.addEventListener("change",async e=>{const id=e.target.dataset.id,status=e.target.value;const {error}=await sb.from("bookings").update({status}).eq("id",id);if(error)alert(error.message);else load()}));
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-document.querySelector("#loginForm").addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target);const {error}=await sb.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});setStatus("#loginStatus",error?error.message:"Signed in…")});
+document.querySelector("#loginForm").addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target);setStatus("#loginStatus","Signing in…");const {data,error}=await sb.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});if(error){setStatus("#loginStatus",error.message);return}if(data?.session){showApp()}else{setStatus("#loginStatus","Signed in, but no session was returned. Please try again.")}});
 document.querySelector("#signup").addEventListener("click",async()=>{const f=new FormData(document.querySelector("#loginForm"));const {error}=await sb.auth.signUp({email:f.get("email"),password:f.get("password")});setStatus("#loginStatus",error?error.message:"Account created. Check your email if confirmation is enabled.")});
 document.querySelector("#forgot").addEventListener("click",async()=>{const email=document.querySelector('#loginForm input[name="email"]').value.trim();if(!email){setStatus("#loginStatus","Enter your email address first.");return}const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+"/reset-password.html"});setStatus("#loginStatus",error?error.message:"Password reset email sent. Check your email.")});
-document.querySelector("#recoveryForm")?.addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target),password=f.get("password"),confirm=f.get("confirm");if(password!==confirm){setStatus("#recoveryStatus","Passwords do not match.");return}const {error}=await sb.auth.updateUser({password});if(error){setStatus("#recoveryStatus",error.message);return}setStatus("#recoveryStatus","Password updated. You can now sign in.");await sb.auth.signOut();recovery.hidden=true;login.hidden=false});
 document.querySelector("#logout").addEventListener("click",()=>sb.auth.signOut());
 document.querySelector("#refresh").addEventListener("click",load);
-sb.auth.onAuthStateChange((event,s)=>{if(event==="PASSWORD_RECOVERY"){login.hidden=true;app.hidden=true;recovery.hidden=false;return}if(s){login.hidden=true;recovery.hidden=true;app.hidden=false;load()}else{login.hidden=false;recovery.hidden=true;app.hidden=true}});
+sb.auth.onAuthStateChange((event,s)=>{if(event==="PASSWORD_RECOVERY"){login.hidden=true;app.hidden=true;if(recovery)recovery.hidden=false;return}if(s){showApp()}else{login.hidden=false;if(recovery)recovery.hidden=true;app.hidden=true}});
+sb.auth.getSession().then(({data})=>{if(data?.session)showApp()});
